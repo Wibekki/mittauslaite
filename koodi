@@ -1,0 +1,116 @@
+// DHT sensor library - Version: Latest 
+#include <DHT.h>
+#include <DHT_U.h>
+
+
+//DHT11
+int SENSOR = 7;
+int temperature;
+int humidity;
+DHT dht(SENSOR, DHT11);
+
+//MAAPERÄKOSTEUS
+int soilm_sensor1 = A5;
+int s_moisture1 = 0;
+int smPower1 = 4;
+
+int soilm_sensor2 = A4;
+int s_moisture2 = 0;
+int smPower2 = 10;
+
+int soilm_sensor3 = A3;
+int s_moisture3 = 0;
+int smPower3 = 12;
+
+int s_moisture_all;
+
+//VALAISTUS
+
+
+
+
+//PUMPPU
+int pump = 11;
+
+void setup() {
+    
+    Serial.begin(9600);
+    
+    dht.begin();
+    
+    pinMode(smPower1, OUTPUT);
+    digitalWrite(smPower1, LOW); 
+
+    pinMode(smPower2, OUTPUT);
+    digitalWrite(smPower2, LOW);
+
+    pinMode(smPower3, OUTPUT);
+    digitalWrite(smPower3, LOW);
+
+
+}
+
+void loop() {
+  
+  temperature = dht.readTemperature();
+  humidity = dht.readHumidity();
+  
+  /*VALAISTUS*/
+
+  /*MAAPERÄN KOSTEUS*/
+ 
+  {
+    digitalWrite(smPower1, HIGH);
+    delay(100);
+    s_moisture1 = analogRead(soilm_sensor1);
+    delay(10);
+    s_moisture1 = analogRead(soilm_sensor1);
+    delay(10);
+    digitalWrite(smPower1, LOW);
+    delay(1000);
+  }
+    
+  {
+    digitalWrite(smPower2, HIGH);
+    delay(100);
+    s_moisture2 = analogRead(soilm_sensor2);
+    delay(10);
+    s_moisture2 = analogRead(soilm_sensor2);
+    delay(10);
+    digitalWrite(smPower2, LOW);
+    delay(1000);
+  }
+  
+  {
+    digitalWrite(smPower3, HIGH);
+    delay(100);
+    s_moisture3 = analogRead(soilm_sensor3);
+    delay(10);
+    s_moisture3 = analogRead(soilm_sensor3);
+    delay(10);
+    digitalWrite(smPower3, LOW);
+    delay(1000);
+  }  
+ 
+ s_moisture_all = ((s_moisture1+s_moisture2+s_moisture3)/3);
+  
+  /*  if (s_moisture_all >= MÄÄRITELLÄÄN KASVIN MUKAAN){
+      digitalWrite(4, HIGH);
+      } else {
+        digitalWrite(4, LOW);
+      }
+    delay(200);
+    */
+  Serial.print(s_moisture1);
+  Serial.print(" ");  
+  Serial.print(s_moisture2);
+  Serial.print(" ");
+  Serial.print(s_moisture3); 
+  Serial.println(" ");
+  Serial.println(s_moisture_all);
+  Serial.println(temperature);
+  Serial.println(humidity);
+  Serial.print(" ");
+  
+  delay(1000);
+}
